@@ -51,6 +51,10 @@ class ProductController extends Controller
 
     public function destroy(Product $product): JsonResponse
     {
+        if ($product->stockBalances()->where('quantity', '>', 0)->exists()) {
+            return response()->json(['message' => 'Produk masih punya stok. Kosongkan stok terlebih dahulu.'], 409);
+        }
+
         $product->delete();
 
         return response()->json(null, 204);

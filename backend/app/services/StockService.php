@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Support\Facades\DB;
 use LogicException;
+use InvalidArgumentException;
 
 class StockService
 {
@@ -55,6 +56,17 @@ class StockService
         );
 
         if ($affected === 0) {
+            $rowExists = DB::table('stock_balances')
+                ->where('product_id', $productId)
+                ->where('warehouse_id', $warehouseId)
+                ->exists();
+
+            // Baris saldo tidak ada = insertOrIgnore ditolak FK (produk/gudang tidak valid),
+            // bukan karena stok kurang.
+            if (!$rowExists) {
+                throw new InvalidArgumentException("Produk #{$productId} atau gudang #{$warehouseId} tidak valid.");
+            }
+
             $name = Product::withTrashed()->whereKey($productId)->value('name') ?? "#{$productId}";
             throw new InsufficientStockException($name);
         }

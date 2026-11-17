@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\UnitController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\StockController;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
@@ -32,5 +33,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // WRITE: admin + sales (customer)
     Route::middleware('role:admin,sales')->group(function () {
         Route::apiResource('customers', CustomerController::class)->only(['store', 'update', 'destroy']);
+    });
+
+    // INVENTORY: baca = semua user login, tulis = admin + gudang
+    Route::get('/stocks', [StockController::class, 'index']);
+    Route::get('/stocks/{product}/movements', [StockController::class, 'movements'])->withTrashed();
+
+    Route::middleware('role:admin,warehouse')->group(function () {
+        Route::post('/stocks/in', [StockController::class, 'stockIn']);
+        Route::post('/stocks/out', [StockController::class, 'stockOut']);
     });
 });
