@@ -6,5 +6,6 @@ enum StockMovementType: string
 {
     case StockIn = 'stock_in';
     case StockOut = 'stock_out';
-    // Step 4/5 nanti nambah: PurchaseReceipt, SalesIssue, SalesCancel
+    case PurchaseReceipt = 'purchase_receipt';
+    // Step 5 nanti nambah: PurchaseReceipt, SalesIssue, SalesCancel
 }
