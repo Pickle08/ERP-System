@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\UnitController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\StockController;
+use App\Http\Controllers\Api\PurchaseOrderController;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
@@ -43,4 +44,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/stocks/in', [StockController::class, 'stockIn']);
         Route::post('/stocks/out', [StockController::class, 'stockOut']);
     });
+
+    // PURCHASE ORDER
+    Route::middleware('role:admin,procurement,warehouse,finance,owner')->group(function () {
+        Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);
+        Route::get('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'show']);
+    });
+
+    Route::middleware('role:admin,procurement')->group(function () {
+        Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
+        Route::put('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update']);
+        Route::post('/purchase-orders/{purchaseOrder}/cancel', [PurchaseOrderController::class, 'cancel']);
+    });
+
+    Route::post('/purchase-orders/{purchaseOrder}/approve', [PurchaseOrderController::class, 'approve'])
+        ->middleware('role:admin,owner');
+
+    Route::post('/purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receive'])
+        ->middleware('role:admin,warehouse');
 });
