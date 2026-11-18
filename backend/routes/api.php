@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\Api\PurchaseOrderController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\SalesOrderController;
+use App\Http\Controllers\Api\ExpenseController;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
@@ -86,5 +88,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin,sales,finance,owner')->group(function () {
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::get('/invoices/{invoice}', [InvoiceController::class, 'show']);
+    });
+
+    // FINANCE: baca = admin, finance, owner; tulis = admin, finance
+    Route::middleware('role:admin,finance,owner')->group(function () {
+        Route::get('/payments', [PaymentController::class, 'index']);
+        Route::get('/payments/{payment}', [PaymentController::class, 'show']);
+        Route::get('/expenses', [ExpenseController::class, 'index']);
+        Route::get('/expenses/{expense}', [ExpenseController::class, 'show']);
+    });
+
+    Route::middleware('role:admin,finance')->group(function () {
+        Route::post('/invoices/{invoice}/payments', [PaymentController::class, 'store']);
+        Route::post('/payments/{payment}/void', [PaymentController::class, 'void']);
+        Route::post('/expenses', [ExpenseController::class, 'store']);
+        Route::post('/expenses/{expense}/void', [ExpenseController::class, 'void']);
     });
 });

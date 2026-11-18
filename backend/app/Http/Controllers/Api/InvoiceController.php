@@ -40,7 +40,7 @@ class InvoiceController extends Controller
     public function show(Invoice $invoice): InvoiceResource
     {
         return new InvoiceResource(
-            $invoice->load(['customer', 'salesOrder.items.product:id,sku,name'])
+            $invoice->load(['customer', 'salesOrder.items.product:id,sku,name', 'payments'])
         );
     }
 }

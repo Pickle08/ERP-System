@@ -18,6 +18,7 @@ class InvoiceResource extends JsonResource
             'tax_amount' => $this->tax_amount,
             'total' => $this->total,
             'paid_amount' => $this->paid_amount,
+            'outstanding_amount' => $this->outstanding_amount,
             'payment_status' => $this->payment_status->value,
             'status' => $this->status->value,
             'voided_at' => $this->voided_at,
@@ -45,6 +46,15 @@ class InvoiceResource extends JsonResource
                     ])->all()
                     : null,
             ]),
+
+            'payments' => $this->whenLoaded('payments', fn() => $this->payments->map(fn($p) => [
+                'id' => $p->id,
+                'payment_number' => $p->payment_number,
+                'payment_date' => $p->payment_date?->format('Y-m-d'),
+                'amount' => $p->amount,
+                'method' => $p->method->value,
+                'status' => $p->status->value,
+            ])->all()),
 
             'created_at' => $this->created_at,
         ];

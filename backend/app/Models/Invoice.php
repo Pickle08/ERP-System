@@ -6,6 +6,7 @@ use App\Enums\InvoiceStatus;
 use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Invoice extends Model
 {
@@ -34,6 +35,7 @@ class Invoice extends Model
             'tax_amount' => 'decimal:2',
             'total' => 'decimal:2',
             'paid_amount' => 'decimal:2',
+            'outstanding_amount' => 'decimal:2',
             'payment_status' => PaymentStatus::class,
             'status' => InvoiceStatus::class,
             'voided_at' => 'datetime',
@@ -53,5 +55,9 @@ class Invoice extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }
