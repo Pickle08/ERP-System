@@ -31,6 +31,9 @@ class StockController extends Controller
             })
             ->when($request->query('category_id'), fn($q, $id) => $q->where('category_id', $id))
             ->when($request->has('is_active'), fn($q) => $q->where('is_active', $request->boolean('is_active')))
+            ->when($request->boolean('low_stock'), fn($q) => $q->whereRaw(
+                'COALESCE((SELECT SUM(sb.quantity) FROM stock_balances sb WHERE sb.product_id = products.id), 0) <= products.min_stock'
+            ))
             ->orderBy('name')
             ->paginate($this->perPage($request));
 

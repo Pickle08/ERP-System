@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\SalesOrderController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\ReportController;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
@@ -104,4 +105,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/expenses', [ExpenseController::class, 'store']);
         Route::post('/expenses/{expense}/void', [ExpenseController::class, 'void']);
     });
+
+    // REPORTS
+    Route::middleware('role:admin,finance,owner')->prefix('reports')->group(function () {
+        Route::get('/summary', [ReportController::class, 'summary']);
+        Route::get('/sales', [ReportController::class, 'sales']);
+        Route::get('/purchases', [ReportController::class, 'purchases']);
+        Route::get('/receivables', [ReportController::class, 'receivables']);
+        Route::get('/expenses', [ReportController::class, 'expenses']);
+    });
+
+    Route::get('/reports/stock-card', [ReportController::class, 'stockCard'])
+        ->middleware('role:admin,warehouse,finance,owner');
 });
