@@ -1,59 +1,155 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ERP Distributor: Backend API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+REST API untuk ERP sederhana perusahaan distributor (satu gudang): master data, stok, pembelian (PO), penjualan (SO + invoice), pembayaran, biaya operasional, dan laporan dasar.
 
-## About Laravel
+Frontend ada di `../frontend` (React + Tailwind CSS v3).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Bagian    | Teknologi                                          |
+| --------- | -------------------------------------------------- |
+| Framework | Laravel LARAVEL_VERSION                            |
+| Bahasa    | PHP PHP_VERSION                                    |
+| Database  | MySQL (dijalankan lewat Laragon)                   |
+| Auth      | Laravel Sanctum (Bearer token), RBAC dengan 6 role |
+| Test      | PHPUnit, database test MySQL terpisah              |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Instalasi
 
-## Learning Laravel
+Prasyarat: Laragon (PHP, MySQL, Composer), Git.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+cd backend
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Buat database (HeidiSQL/phpMyAdmin, atau `mysql -u root -e "CREATE DATABASE erp_distributor CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"`), lalu atur `.env`:
 
-## Laravel Sponsors
+```env
+APP_TIMEZONE=Asia/Jakarta
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=erp_distributor
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Migrate, seed, dan jalankan:
 
-### Premium Partners
+```bash
+php artisan migrate:fresh --seed                  # skema + role + master data + akun demo
+php artisan db:seed --class=DemoDataSeeder        # opsional: 90 hari transaksi demo
+php artisan serve                                 # http://127.0.0.1:8000
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Akun demo
 
-## Contributing
+Password semua akun: `password` (hanya untuk lokal).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Role        | Email                |
+| ----------- | -------------------- |
+| Admin       | admin@erp.test       |
+| Sales       | sales@erp.test       |
+| Gudang      | warehouse@erp.test   |
+| Procurement | procurement@erp.test |
+| Finance     | finance@erp.test     |
+| Owner       | owner@erp.test       |
 
-## Code of Conduct
+Login: `POST /api/auth/login` dengan `{"email", "password"}`, lalu kirim `Authorization: Bearer <token>` dan `Accept: application/json` di setiap request.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Hak akses
 
-## Security Vulnerabilities
+| Modul                              | Baca                                         | Tulis                                                                                                            |
+| ---------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Kategori, satuan, supplier, produk | Semua role                                   | Admin, Procurement                                                                                               |
+| Customer                           | Semua role                                   | Admin, Sales                                                                                                     |
+| Stok (daftar, riwayat)             | Semua role                                   | Stock In/Out manual: Admin, Gudang                                                                               |
+| Purchase Order                     | Admin, Procurement, Gudang, Finance, Owner   | Buat/ubah/batal: Admin, Procurement. Setujui: Admin, Owner. Terima barang: Admin, Gudang                         |
+| Sales Order                        | Admin, Sales, Gudang, Finance, Owner         | Buat/ubah/konfirmasi/batal: Admin, Sales. Barang keluar: Admin, Gudang. Batal setelah barang keluar: hanya Admin |
+| Invoice                            | Admin, Sales, Finance, Owner                 | Dibuat otomatis saat barang keluar                                                                               |
+| Pembayaran, biaya                  | Admin, Finance, Owner                        | Admin, Finance                                                                                                   |
+| Laporan                            | Admin, Finance, Owner (kartu stok: + Gudang) | n/a                                                                                                              |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Alur dan aturan bisnis
 
-## License
+- **Pembelian:** `draft` → `approved` → `received` (atau `cancelled`). Stok bertambah **hanya** saat barang diterima, dalam satu transaksi database dengan perubahan status.
+- **Penjualan:** `draft` → `confirmed` → `issued` (atau `cancelled`). Konfirmasi hanya **mengecek** stok (tanpa reservasi). Stok berkurang saat barang keluar, dan invoice dibuat otomatis.
+- **Stok tidak pernah negatif:** dijaga di SQL (`UPDATE ... WHERE saldo + delta >= 0`) dan `CHECK` constraint.
+- **Ledger stok immutable:** setiap perubahan = 1 baris `stock_movements`. Saldo harus sama dengan jumlah movement.
+- **Pembatalan SO setelah barang keluar:** stok dikembalikan lewat movement baru, invoice di-void. Ditolak jika invoice sudah ada pembayaran.
+- **Pembayaran:** tidak boleh melebihi sisa tagihan. Salah input dikoreksi dengan **void** (alasan wajib), bukan edit.
+- **Total dihitung database** (generated column), bukan PHP. Tidak ada aritmetika uang float.
+- **Nomor dokumen** (`PO-202611-0001`, `SO-`, `INV-`, `PAY-`, `EXP-`) berurutan per bulan, tanpa lompatan.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Endpoint utama
+
+Semua di bawah `/api`. List mendukung `search`, `per_page` (maks 100), dan filter spesifik; response berbentuk `{data, links, meta}`. Error validasi `422 {message, errors}`, konflik status `409`, tanpa akses `403`.
+
+| Grup    | Endpoint                                                                                                     |
+| ------- | ------------------------------------------------------------------------------------------------------------ |
+| Auth    | `POST /auth/login`, `GET /auth/me`, `POST /auth/logout`                                                      |
+| Master  | `/categories`, `/units`, `/suppliers`, `/customers`, `/products` (CRUD)                                      |
+| Stok    | `GET /stocks` (`?low_stock=1`), `GET /stocks/{product}/movements`, `POST /stocks/in`, `POST /stocks/out`     |
+| PO      | `/purchase-orders` (CRUD kecuali hapus), `POST .../approve`, `.../receive`, `.../cancel`                     |
+| SO      | `/sales-orders`, `POST .../confirm`, `.../issue`, `.../cancel`                                               |
+| Invoice | `GET /invoices`, `GET /invoices/{id}`                                                                        |
+| Finance | `POST /invoices/{id}/payments`, `GET /payments`, `POST /payments/{id}/void`, `/expenses` (+ `POST .../void`) |
+| Laporan | `/reports/summary`, `/sales`, `/purchases`, `/receivables`, `/expenses`, `/stock-card`                       |
+
+## Definisi laporan
+
+| Laporan                 | Definisi                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| Penjualan               | Invoice `active` (void tidak dihitung), berdasarkan tanggal invoice                     |
+| Pembelian               | PO `received` (default), berdasarkan tanggal PO                                         |
+| Piutang                 | Snapshot hari ini: invoice `active` yang masih ada sisa. Umur dihitung dari jatuh tempo |
+| Biaya, pembayaran masuk | Yang berstatus `active`, berdasarkan tanggal transaksi                                  |
+| Kartu stok              | Saldo awal, mutasi, saldo akhir dari ledger stok                                        |
+
+## Testing
+
+Tes memakai database MySQL **terpisah** (`erp_distributor_test`) karena logika stok bergantung pada perilaku MySQL.
+
+```bash
+mysql -u root -e "CREATE DATABASE erp_distributor_test"
+php artisan test
+```
+
+Pastikan `phpunit.xml` mengarah ke `erp_distributor_test`, **bukan** database dev (`RefreshDatabase` menghapus isi database).
+
+Cek konsistensi data kapan saja (saldo stok vs ledger, pembayaran vs invoice):
+
+```bash
+php artisan erp:check-integrity
+```
+
+## Backup dan restore
+
+```bash
+bash scripts/backup.sh                              # hasil di backups/<db>_<waktu>.sql
+bash scripts/restore.sh backups/<file>.sql          # DESTRUKTIF, minta konfirmasi, lalu cek integritas
+```
+
+Verifikasi backup tanpa menyentuh database utama:
+
+```bash
+mysql -u root -e "CREATE DATABASE erp_restore_check"
+mysql -u root erp_restore_check < backups/<file>.sql
+mysql -u root erp_restore_check -e "SELECT COUNT(*) AS invoices FROM invoices"
+mysql -u root -e "DROP DATABASE erp_restore_check"
+```
+
+`mysqldump`/`mysql` harus ada di PATH (Laragon → Tools → Path), atau set `MYSQLDUMP` / `MYSQL_BIN`.
+
+## Batasan MVP
+
+- Penerimaan barang dan pengiriman **penuh saja** (belum parsial).
+- Tidak ada reservasi stok: dua SO bisa sama-sama `confirmed` untuk stok yang cuma cukup satu; yang kedua ditolak saat barang keluar.
+- Tidak ada costing stok (FIFO/average), jadi **belum ada laporan laba/rugi**.
+- Satu gudang aktif (skema sudah siap multi-gudang).
+- Belum ada retur ke supplier, refund, atau kredit customer.
+- Piutang hanya snapshot hari ini, bukan posisi per tanggal tertentu.
+- Token API berlaku 8 jam (`config/sanctum.php`).
