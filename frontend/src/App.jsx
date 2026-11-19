@@ -1,8 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
+import AppLayout from "./components/layout/AppLayout";
 import StatusPage from "./components/StatusPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
+import StocksPage from "./pages/StocksPage";
 
 export default function App() {
     return (
@@ -10,7 +12,10 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
 
             <Route element={<ProtectedRoute />}>
-                <Route path="/" element={<DashboardPage />} />
+                <Route element={<AppLayout />}>
+                    <Route path="/" element={<DashboardPage />} />
+                    <Route path="/stocks" element={<StocksPage />} />
+                </Route>
             </Route>
 
             <Route
