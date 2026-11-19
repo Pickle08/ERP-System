@@ -1,17 +1,38 @@
+import { Route, Routes } from "react-router-dom";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import StatusPage from "./components/StatusPage";
+import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/LoginPage";
+
 export default function App() {
     return (
-        <div className="flex min-h-screen items-center justify-center bg-slate-100">
-            <div className="rounded-xl bg-white p-8 shadow">
-                <h1 className="text-2xl font-bold text-slate-800">
-                    ERP Distributor
-                </h1>
-                <p className="mt-2 text-slate-500">
-                    Vite + React + Tailwind v3 siap.
-                </p>
-                <button className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700">
-                    Tes tombol
-                </button>
-            </div>
-        </div>
+        <Routes>
+            <Route path="/login" element={<LoginPage />} />
+
+            <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<DashboardPage />} />
+            </Route>
+
+            <Route
+                path="/forbidden"
+                element={
+                    <StatusPage
+                        code="403"
+                        title="Akses ditolak"
+                        message="Role Anda tidak punya akses ke halaman ini."
+                    />
+                }
+            />
+            <Route
+                path="*"
+                element={
+                    <StatusPage
+                        code="404"
+                        title="Halaman tidak ditemukan"
+                        message="Alamat yang Anda buka tidak ada."
+                    />
+                }
+            />
+        </Routes>
     );
 }
