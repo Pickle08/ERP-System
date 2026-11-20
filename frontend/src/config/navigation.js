@@ -53,7 +53,7 @@ export const NAV_SECTIONS = [
                     "finance",
                     "owner",
                 ],
-                ready: false,
+                ready: true,
             },
             {
                 label: "Penjualan (SO)",
