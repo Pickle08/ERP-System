@@ -5,6 +5,7 @@ import StatusPage from "./components/StatusPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import StocksPage from "./pages/StocksPage";
+import StockMovementsPage from "./pages/StockMovementsPage";
 
 export default function App() {
     return (
@@ -15,6 +16,10 @@ export default function App() {
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<DashboardPage />} />
                     <Route path="/stocks" element={<StocksPage />} />
+                    <Route
+                        path="/stocks/:productId/movements"
+                        element={<StockMovementsPage />}
+                    />
                 </Route>
             </Route>
 
@@ -37,6 +42,11 @@ export default function App() {
                         message="Alamat yang Anda buka tidak ada."
                     />
                 }
+            />
+
+            <Route
+                path="/stocks/:productId/movements"
+                element={<StockMovementsPage />}
             />
         </Routes>
     );

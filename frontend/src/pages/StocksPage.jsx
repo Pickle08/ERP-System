@@ -9,6 +9,10 @@ import Pagination from "../components/ui/Pagination";
 import SearchInput from "../components/ui/SearchInput";
 import { useListParams } from "../hooks/useListParams";
 import { formatNumber } from "../lib/format";
+import { Link } from "react-router-dom";
+import { STOCK_MOVE_ROLES } from "../auth/permissions";
+import { useAuth } from "../auth/useAuth";
+import StockMovementDialog from "../components/stock/StockMovementDialog";
 
 // Label tampilan saja; angka dan filter "menipis" berasal dari backend
 function stockStatus(row) {
@@ -21,7 +25,7 @@ function stockStatus(row) {
     return { label: "Aman", tone: "green" };
 }
 
-const COLUMNS = [
+const BASE_COLUMNS = [
     {
         key: "sku",
         header: "SKU",
@@ -69,6 +73,45 @@ const COLUMNS = [
 
 export default function StocksPage() {
     const { page, get, update, reset, hasFilters } = useListParams();
+    const { user } = useAuth();
+    const canMove = STOCK_MOVE_ROLES.includes(user.role);
+    const [dialog, setDialog] = useState(null); // { mode: 'in' | 'out', product: baris stok }
+
+    const columns = [
+        ...BASE_COLUMNS,
+        {
+            key: "actions",
+            header: "",
+            align: "right",
+            cell: (row) => (
+                <div className="flex items-center justify-end gap-3 whitespace-nowrap text-xs">
+                    {canMove && (
+                        <>
+                            <button
+                                onClick={() =>
+                                    setDialog({ mode: "in", product: row })
+                                }
+                                className="font-medium text-emerald-700 hover:underline">
+                                + Masuk
+                            </button>
+                            <button
+                                onClick={() =>
+                                    setDialog({ mode: "out", product: row })
+                                }
+                                className="font-medium text-amber-700 hover:underline">
+                                − Keluar
+                            </button>
+                        </>
+                    )}
+                    <Link
+                        to={`/stocks/${row.product_id}/movements`}
+                        className="font-medium text-indigo-600 hover:underline">
+                        Riwayat
+                    </Link>
+                </div>
+            ),
+        },
+    ];
     const [resetKey, setResetKey] = useState(0); // remount SearchInput saat filter di-reset
 
     const categoryId = get("category_id");
@@ -150,7 +193,7 @@ export default function StocksPage() {
             </div>
 
             <DataTable
-                columns={COLUMNS}
+                columns={columns}
                 rows={stocks.data?.data ?? []}
                 rowKey="product_id"
                 isLoading={stocks.isLoading}
@@ -168,6 +211,13 @@ export default function StocksPage() {
                 meta={stocks.data?.meta}
                 onPageChange={(next) => update({ page: next })}
             />
+            {dialog && (
+                <StockMovementDialog
+                    mode={dialog.mode}
+                    product={dialog.product}
+                    onClose={() => setDialog(null)}
+                />
+            )}
         </>
     );
 }

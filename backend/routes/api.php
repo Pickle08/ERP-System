@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\SalesOrderController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\WarehouseController;
 
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
@@ -49,6 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/stocks/in', [StockController::class, 'stockIn']);
         Route::post('/stocks/out', [StockController::class, 'stockOut']);
     });
+
+    Route::get('/warehouses', [WarehouseController::class, 'index']);
 
     // PURCHASE ORDER
     Route::middleware('role:admin,procurement,warehouse,finance,owner')->group(function () {
