@@ -6,9 +6,10 @@ import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import StocksPage from "./pages/StocksPage";
 import StockMovementsPage from "./pages/StockMovementsPage";
-import { PO_VIEW_ROLES } from "./auth/permissions";
+import { PO_VIEW_ROLES, PO_WRITE_ROLES } from "./auth/permissions";
 import PurchaseOrderDetailPage from "./pages/PurchaseOrderDetailPage";
 import PurchaseOrdersPage from "./pages/PurchaseOrdersPage";
+import PurchaseOrderFormPage from "./pages/PurchaseOrderFormPage";
 
 export default function App() {
     return (
@@ -31,6 +32,16 @@ export default function App() {
                         <Route
                             path="/purchase-orders/:id"
                             element={<PurchaseOrderDetailPage />}
+                        />
+                    </Route>
+                    <Route element={<ProtectedRoute roles={PO_WRITE_ROLES} />}>
+                        <Route
+                            path="/purchase-orders/new"
+                            element={<PurchaseOrderFormPage />}
+                        />
+                        <Route
+                            path="/purchase-orders/:id/edit"
+                            element={<PurchaseOrderFormPage />}
                         />
                     </Route>
                 </Route>

@@ -14,3 +14,9 @@ const transition = (action) => (id, note) =>
 export const approvePurchaseOrder = transition("approve");
 export const receivePurchaseOrder = transition("receive");
 export const cancelPurchaseOrder = transition("cancel");
+
+export const createPurchaseOrder = (payload) =>
+    api.post("/purchase-orders", payload).then((res) => res.data.data);
+
+export const updatePurchaseOrder = (id, payload) =>
+    api.put(`/purchase-orders/${id}`, payload).then((res) => res.data.data);

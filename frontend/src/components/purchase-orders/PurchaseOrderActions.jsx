@@ -4,6 +4,7 @@ import {
     PO_WRITE_ROLES,
 } from "../../auth/permissions";
 import { useAuth } from "../../auth/useAuth";
+import { Link } from "react-router-dom";
 
 // Hanya menentukan tombol mana yang tampil; keputusan akhir tetap di backend
 export default function PurchaseOrderActions({ po, onAction }) {
@@ -39,12 +40,25 @@ export default function PurchaseOrderActions({ po, onAction }) {
         });
     }
 
-    return buttons.map(({ action, label, className }) => (
-        <button
-            key={action}
-            onClick={() => onAction(action)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium ${className}`}>
-            {label}
-        </button>
-    ));
+    const canEdit = po.status === "draft" && PO_WRITE_ROLES.includes(role);
+
+    return (
+        <>
+            {canEdit && (
+                <Link
+                    to={`/purchase-orders/${po.id}/edit`}
+                    className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    Ubah
+                </Link>
+            )}
+            {buttons.map(({ action, label, className }) => (
+                <button
+                    key={action}
+                    onClick={() => onAction(action)}
+                    className={`rounded-lg px-4 py-2 text-sm font-medium ${className}`}>
+                    {label}
+                </button>
+            ))}
+        </>
+    );
 }

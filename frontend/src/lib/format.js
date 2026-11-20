@@ -34,3 +34,7 @@ const dateFormat = new Intl.DateTimeFormat("id-ID", {
 
 export const formatDate = (value) =>
     value ? dateFormat.format(new Date(value)) : "-";
+
+// Tanggal hari ini menurut zona waktu bisnis (WIB), format YYYY-MM-DD untuk <input type="date">
+export const todayInJakarta = () =>
+    new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });

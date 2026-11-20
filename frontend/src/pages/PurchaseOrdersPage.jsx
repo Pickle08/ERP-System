@@ -12,6 +12,8 @@ import { useListParams } from "../hooks/useListParams";
 import { formatCurrency, formatDate } from "../lib/format";
 import { PURCHASE_ORDER_STATUS } from "../lib/statuses";
 import { inputClass } from "../lib/ui";
+import { PO_WRITE_ROLES } from "../auth/permissions";
+import { useAuth } from "../auth/useAuth";
 
 const COLUMNS = [
     {
@@ -64,6 +66,9 @@ export default function PurchaseOrdersPage() {
     const { page, get, update, reset, hasFilters } = useListParams();
     const [resetKey, setResetKey] = useState(0);
 
+    const { user } = useAuth();
+    const canCreate = PO_WRITE_ROLES.includes(user.role);
+
     const status = get("status");
     const supplierId = get("supplier_id");
     const from = get("from");
@@ -101,6 +106,15 @@ export default function PurchaseOrdersPage() {
             <PageHeader
                 title="Pembelian (PO)"
                 description="Purchase Order ke supplier dan penerimaan barang."
+                actions={
+                    canCreate && (
+                        <Link
+                            to="/purchase-orders/new"
+                            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+                            + Buat PO
+                        </Link>
+                    )
+                }
             />
 
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
