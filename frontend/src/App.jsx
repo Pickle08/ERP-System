@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import StocksPage from "./pages/StocksPage";
 import StockMovementsPage from "./pages/StockMovementsPage";
 import {
+    REPORT_VIEW_ROLES,
     FINANCE_VIEW_ROLES,
     INVOICE_VIEW_ROLES,
     PO_VIEW_ROLES,
@@ -25,6 +26,7 @@ import InvoicePrintPage from "./pages/InvoicePrintPage";
 import InvoicesPage from "./pages/InvoicesPage";
 import ExpensesPage from "./pages/ExpensesPage";
 import PaymentsPage from "./pages/PaymentsPage";
+import ReportsPage from "./pages/ReportsPage";
 
 export default function App() {
     return (
@@ -92,6 +94,10 @@ export default function App() {
                         element={<ProtectedRoute roles={FINANCE_VIEW_ROLES} />}>
                         <Route path="/payments" element={<PaymentsPage />} />
                         <Route path="/expenses" element={<ExpensesPage />} />
+                    </Route>
+                    <Route
+                        element={<ProtectedRoute roles={REPORT_VIEW_ROLES} />}>
+                        <Route path="/reports" element={<ReportsPage />} />
                     </Route>
                 </Route>
             </Route>

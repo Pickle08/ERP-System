@@ -25,3 +25,5 @@ export const INVOICE_VIEW_ROLES = ["admin", "sales", "finance", "owner"];
 
 export const FINANCE_VIEW_ROLES = ["admin", "finance", "owner"];
 export const FINANCE_WRITE_ROLES = ["admin", "finance"];
+
+export const REPORT_VIEW_ROLES = ["admin", "finance", "owner"];
