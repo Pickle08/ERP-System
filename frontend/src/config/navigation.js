@@ -67,7 +67,7 @@ export const NAV_SECTIONS = [
                 to: "/invoices",
                 icon: FileText,
                 roles: ["admin", "sales", "finance", "owner"],
-                ready: false,
+                ready: true,
             },
         ],
     },

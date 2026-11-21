@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import StocksPage from "./pages/StocksPage";
 import StockMovementsPage from "./pages/StockMovementsPage";
 import {
+    INVOICE_VIEW_ROLES,
     PO_VIEW_ROLES,
     PO_WRITE_ROLES,
     SO_VIEW_ROLES,
@@ -18,6 +19,9 @@ import PurchaseOrderFormPage from "./pages/PurchaseOrderFormPage";
 import SalesOrderDetailPage from "./pages/SalesOrderDetailPage";
 import SalesOrderFormPage from "./pages/SalesOrderFormPage";
 import SalesOrdersPage from "./pages/SalesOrdersPage";
+import InvoiceDetailPage from "./pages/InvoiceDetailPage";
+import InvoicePrintPage from "./pages/InvoicePrintPage";
+import InvoicesPage from "./pages/InvoicesPage";
 
 export default function App() {
     return (
@@ -73,7 +77,22 @@ export default function App() {
                             element={<SalesOrderFormPage />}
                         />
                     </Route>
+                    <Route
+                        element={<ProtectedRoute roles={INVOICE_VIEW_ROLES} />}>
+                        <Route path="/invoices" element={<InvoicesPage />} />
+                        <Route
+                            path="/invoices/:id"
+                            element={<InvoiceDetailPage />}
+                        />
+                    </Route>
                 </Route>
+            </Route>
+
+            <Route element={<ProtectedRoute roles={INVOICE_VIEW_ROLES} />}>
+                <Route
+                    path="/invoices/:id/print"
+                    element={<InvoicePrintPage />}
+                />
             </Route>
 
             <Route

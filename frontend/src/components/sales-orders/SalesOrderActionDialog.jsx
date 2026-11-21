@@ -71,6 +71,7 @@ export default function SalesOrderActionDialog({ action, so, onClose }) {
                 queryClient.invalidateQueries({ queryKey: ["stocks"] });
                 queryClient.invalidateQueries({ queryKey: ["movements"] });
                 queryClient.invalidateQueries({ queryKey: ["invoices"] });
+                queryClient.invalidateQueries({ queryKey: ["invoice"] });
             }
 
             toast.success(cfg.success(updated));

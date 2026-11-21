@@ -23,6 +23,8 @@ import {
     PAYMENT_STATUS,
     SALES_ORDER_STATUS,
 } from "../lib/statuses";
+import { INVOICE_VIEW_ROLES } from "../auth/permissions";
+import { useAuth } from "../auth/useAuth";
 
 const ITEM_COLUMNS = [
     {
@@ -69,6 +71,9 @@ const ITEM_COLUMNS = [
 export default function SalesOrderDetailPage() {
     const { id } = useParams();
     const [action, setAction] = useState(null); // 'confirm' | 'issue' | 'cancel'
+
+    const { user } = useAuth();
+    const canViewInvoice = INVOICE_VIEW_ROLES.includes(user.role);
 
     const query = useQuery({
         queryKey: ["sales-order", id],
@@ -192,9 +197,17 @@ export default function SalesOrderDetailPage() {
                             <h2 className="mb-3 text-sm font-semibold text-slate-800">
                                 Invoice
                             </h2>
-                            <p className="font-mono text-sm font-medium text-slate-800">
-                                {so.invoice.invoice_number}
-                            </p>
+                            {canViewInvoice ? (
+                                <Link
+                                    to={`/invoices/${so.invoice.id}`}
+                                    className="font-mono text-sm font-medium text-indigo-600 hover:underline">
+                                    {so.invoice.invoice_number}
+                                </Link>
+                            ) : (
+                                <p className="font-mono text-sm font-medium text-slate-800">
+                                    {so.invoice.invoice_number}
+                                </p>
+                            )}
                             <p className="mt-1 text-sm text-slate-600">
                                 {formatCurrency(so.invoice.total)}
                             </p>

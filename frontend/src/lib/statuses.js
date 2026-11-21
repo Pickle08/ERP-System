@@ -21,3 +21,13 @@ export const INVOICE_STATUS = {
     active: { label: "Aktif", tone: "slate" },
     void: { label: "Void", tone: "red" },
 };
+export const RECORD_STATUS = {
+    active: { label: "Aktif", tone: "green" },
+    void: { label: "Void", tone: "red" },
+};
+
+export const PAYMENT_METHOD = {
+    cash: "Tunai",
+    bank_transfer: "Transfer Bank",
+    other: "Lainnya",
+};

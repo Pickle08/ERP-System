@@ -20,3 +20,5 @@ export const SO_VIEW_ROLES = [
 export const SO_WRITE_ROLES = ["admin", "sales"]; // buat, ubah, konfirmasi, batal (sebelum barang keluar)
 export const SO_ISSUE_ROLES = ["admin", "warehouse"];
 export const SO_CANCEL_ISSUED_ROLES = ["admin"]; // batal SO yang barangnya sudah keluar
+
+export const INVOICE_VIEW_ROLES = ["admin", "sales", "finance", "owner"];
