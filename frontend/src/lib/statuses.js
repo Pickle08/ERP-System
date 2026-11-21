@@ -31,3 +31,13 @@ export const PAYMENT_METHOD = {
     bank_transfer: "Transfer Bank",
     other: "Lainnya",
 };
+
+export const EXPENSE_CATEGORY = {
+    salary: "Gaji",
+    rent: "Sewa",
+    utilities: "Listrik, air, dan utilitas",
+    transport: "Transport dan pengiriman",
+    marketing: "Pemasaran",
+    supplies: "Perlengkapan",
+    other: "Lainnya",
+};

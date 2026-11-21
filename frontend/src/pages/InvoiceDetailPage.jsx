@@ -22,6 +22,11 @@ import {
     PAYMENT_STATUS,
     RECORD_STATUS,
 } from "../lib/statuses";
+import { useState } from "react";
+import { FINANCE_WRITE_ROLES } from "../auth/permissions";
+import { useAuth } from "../auth/useAuth";
+import PaymentVoidDialog from "../components/finance/PaymentVoidDialog";
+import RecordPaymentDialog from "../components/finance/RecordPaymentDialog";
 
 const ITEM_COLUMNS = [
     {
@@ -65,7 +70,7 @@ const ITEM_COLUMNS = [
     },
 ];
 
-const PAYMENT_COLUMNS = [
+const BASE_PAYMENT_COLUMNS = [
     {
         key: "payment_number",
         header: "No. Pembayaran",
@@ -103,6 +108,10 @@ const PAYMENT_COLUMNS = [
 
 export default function InvoiceDetailPage() {
     const { id } = useParams();
+
+    const { user } = useAuth();
+    const canWrite = FINANCE_WRITE_ROLES.includes(user.role);
+    const [dialog, setDialog] = useState(null); // { type: 'pay' } | { type: 'void', payment }
 
     const query = useQuery({
         queryKey: ["invoice", id],
@@ -157,6 +166,33 @@ export default function InvoiceDetailPage() {
     const isVoid = invoice.status === "void";
     const terms =
         so.payment_terms_days === 0 ? "Tunai" : `${so.payment_terms_days} hari`;
+    const canRecordPayment =
+        canWrite && !isVoid && Number(invoice.outstanding_amount) > 0;
+
+    const paymentColumns = [
+        ...BASE_PAYMENT_COLUMNS,
+        ...(canWrite
+            ? [
+                  {
+                      key: "actions",
+                      header: "",
+                      align: "right",
+                      cell: (p) =>
+                          p.status === "active" ? (
+                              <button
+                                  onClick={() =>
+                                      setDialog({ type: "void", payment: p })
+                                  }
+                                  className="text-xs font-medium text-red-600 hover:underline">
+                                  Void
+                              </button>
+                          ) : null,
+                  },
+              ]
+            : []),
+    ];
+
+    so.payment_terms_days === 0 ? "Tunai" : `${so.payment_terms_days} hari`;
 
     return (
         <>
@@ -182,6 +218,13 @@ export default function InvoiceDetailPage() {
                             className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
                             <Printer className="h-4 w-4" /> Cetak
                         </Link>
+                        {canRecordPayment && (
+                            <button
+                                onClick={() => setDialog({ type: "pay" })}
+                                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+                                Catat Pembayaran
+                            </button>
+                        )}
                     </>
                 }
             />
@@ -255,13 +298,25 @@ export default function InvoiceDetailPage() {
                             Pembayaran
                         </h2>
                         <DataTable
-                            columns={PAYMENT_COLUMNS}
+                            columns={paymentColumns}
                             rows={invoice.payments ?? []}
                             emptyMessage="Belum ada pembayaran."
                         />
                     </div>
                 </aside>
             </div>
+            {dialog?.type === "pay" && (
+                <RecordPaymentDialog
+                    invoice={invoice}
+                    onClose={() => setDialog(null)}
+                />
+            )}
+            {dialog?.type === "void" && (
+                <PaymentVoidDialog
+                    payment={dialog.payment}
+                    onClose={() => setDialog(null)}
+                />
+            )}
         </>
     );
 }

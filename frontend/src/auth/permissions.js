@@ -22,3 +22,6 @@ export const SO_ISSUE_ROLES = ["admin", "warehouse"];
 export const SO_CANCEL_ISSUED_ROLES = ["admin"]; // batal SO yang barangnya sudah keluar
 
 export const INVOICE_VIEW_ROLES = ["admin", "sales", "finance", "owner"];
+
+export const FINANCE_VIEW_ROLES = ["admin", "finance", "owner"];
+export const FINANCE_WRITE_ROLES = ["admin", "finance"];

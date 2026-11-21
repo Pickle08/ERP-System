@@ -70,7 +70,7 @@ const ITEM_COLUMNS = [
 
 export default function SalesOrderDetailPage() {
     const { id } = useParams();
-    const [action, setAction] = useState(null); // 'confirm' | 'issue' | 'cancel'
+    const [action, setAction] = useState(null);
 
     const { user } = useAuth();
     const canViewInvoice = INVOICE_VIEW_ROLES.includes(user.role);

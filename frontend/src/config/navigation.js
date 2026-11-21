@@ -79,14 +79,14 @@ export const NAV_SECTIONS = [
                 to: "/payments",
                 icon: Wallet,
                 roles: ["admin", "finance", "owner"],
-                ready: false,
+                ready: true,
             },
             {
                 label: "Biaya",
                 to: "/expenses",
                 icon: Receipt,
                 roles: ["admin", "finance", "owner"],
-                ready: false,
+                ready: true,
             },
             {
                 label: "Laporan",
