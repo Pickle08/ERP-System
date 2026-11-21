@@ -60,7 +60,7 @@ export const NAV_SECTIONS = [
                 to: "/sales-orders",
                 icon: ClipboardList,
                 roles: ["admin", "sales", "warehouse", "finance", "owner"],
-                ready: false,
+                ready: true,
             },
             {
                 label: "Invoice",

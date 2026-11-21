@@ -2,7 +2,7 @@ import { useId, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getProducts } from "../../api/products";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
-import { formatCurrency } from "../../lib/format";
+import { formatCurrency, formatNumber } from "../../lib/format";
 import { inputClass } from "../../lib/ui";
 
 // value: objek produk terpilih (minimal { id, sku, name }) atau null
@@ -13,6 +13,9 @@ export default function ProductPicker({
     excludeIds = [],
     error,
     ariaLabel = "Produk",
+    priceField = "cost_price", // SO pakai 'sell_price'
+    priceLabel = "Harga beli",
+    showStock = false,
 }) {
     const listId = useId();
     const label = value ? `${value.sku} — ${value.name}` : "";
@@ -140,8 +143,11 @@ export default function ProductPicker({
                                 {product.name}
                             </span>
                             <span className="block text-xs text-slate-500">
-                                Harga beli {formatCurrency(product.cost_price)}
+                                {priceLabel}{" "}
+                                {formatCurrency(product[priceField])}
                                 {product.unit ? ` / ${product.unit.code}` : ""}
+                                {showStock &&
+                                    ` · Stok ${formatNumber(product.stock_quantity ?? 0)}`}
                             </span>
                         </li>
                     ))}

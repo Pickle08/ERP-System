@@ -21,6 +21,7 @@ class ProductResource extends JsonResource
             'cost_price' => $this->cost_price,
             'sell_price' => $this->sell_price,
             'min_stock' => $this->min_stock,
+            'stock_quantity' => $this->whenHas('stock_quantity'),
             'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

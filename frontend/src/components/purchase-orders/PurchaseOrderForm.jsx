@@ -14,6 +14,7 @@ import { inputClass } from "../../lib/ui";
 import ProductPicker from "../products/ProductPicker";
 import { useToast } from "../toast/useToast";
 import Field from "../ui/Field";
+import ErrorText from "../ui/ErrorText";
 
 const MAX_ITEMS = 100;
 const KNOWN_FIELDS = [
@@ -87,12 +88,6 @@ function validate(form) {
 
 const rowEstimate = (row) =>
     (Number(row.quantity) || 0) * (Number(row.unit_price) || 0);
-
-function ErrorText({ message }) {
-    return message ? (
-        <p className="mt-1 text-xs text-red-600">{message}</p>
-    ) : null;
-}
 
 // po: objek PO untuk mode ubah; kosong = mode buat baru
 export default function PurchaseOrderForm({ po }) {

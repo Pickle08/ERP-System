@@ -16,6 +16,7 @@ class ProductController extends Controller
     {
         $products = Product::query()
             ->with(['category', 'unit'])
+            ->withSum('stockBalances as stock_quantity', 'quantity')
             ->when($request->query('search'), function ($q, $s) {
                 $q->where(fn($w) => $w->where('name', 'like', "%{$s}%")
                     ->orWhere('sku', 'like', "%{$s}%"));

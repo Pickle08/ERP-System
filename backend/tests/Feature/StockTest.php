@@ -163,4 +163,13 @@ class StockTest extends TestCase
             ->assertJsonPath('data.0.sku', 'TST-001')
             ->assertJsonPath('data.0.quantity', '10.000');
     }
+    public function test_product_list_includes_current_stock_quantity(): void
+    {
+        $this->actingAsRole('warehouse');
+        $this->postJson('/api/stocks/in', $this->payload())->assertCreated();
+
+        $this->getJson('/api/products?search=TST')
+            ->assertOk()
+            ->assertJsonPath('data.0.stock_quantity', '10.000');
+    }
 }

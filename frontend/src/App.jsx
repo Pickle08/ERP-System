@@ -6,10 +6,18 @@ import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
 import StocksPage from "./pages/StocksPage";
 import StockMovementsPage from "./pages/StockMovementsPage";
-import { PO_VIEW_ROLES, PO_WRITE_ROLES } from "./auth/permissions";
+import {
+    PO_VIEW_ROLES,
+    PO_WRITE_ROLES,
+    SO_VIEW_ROLES,
+    SO_WRITE_ROLES,
+} from "./auth/permissions";
 import PurchaseOrderDetailPage from "./pages/PurchaseOrderDetailPage";
 import PurchaseOrdersPage from "./pages/PurchaseOrdersPage";
 import PurchaseOrderFormPage from "./pages/PurchaseOrderFormPage";
+import SalesOrderDetailPage from "./pages/SalesOrderDetailPage";
+import SalesOrderFormPage from "./pages/SalesOrderFormPage";
+import SalesOrdersPage from "./pages/SalesOrdersPage";
 
 export default function App() {
     return (
@@ -42,6 +50,27 @@ export default function App() {
                         <Route
                             path="/purchase-orders/:id/edit"
                             element={<PurchaseOrderFormPage />}
+                        />
+                    </Route>
+                    <Route element={<ProtectedRoute roles={SO_VIEW_ROLES} />}>
+                        <Route
+                            path="/sales-orders"
+                            element={<SalesOrdersPage />}
+                        />
+                        <Route
+                            path="/sales-orders/:id"
+                            element={<SalesOrderDetailPage />}
+                        />
+                    </Route>
+
+                    <Route element={<ProtectedRoute roles={SO_WRITE_ROLES} />}>
+                        <Route
+                            path="/sales-orders/new"
+                            element={<SalesOrderFormPage />}
+                        />
+                        <Route
+                            path="/sales-orders/:id/edit"
+                            element={<SalesOrderFormPage />}
                         />
                     </Route>
                 </Route>
