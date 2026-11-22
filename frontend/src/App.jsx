@@ -27,6 +27,14 @@ import InvoicesPage from "./pages/InvoicesPage";
 import ExpensesPage from "./pages/ExpensesPage";
 import PaymentsPage from "./pages/PaymentsPage";
 import ReportsPage from "./pages/ReportsPage";
+import {
+    CATEGORIES,
+    CUSTOMERS,
+    PRODUCTS,
+    SUPPLIERS,
+    UNITS,
+} from "./config/masterData";
+import MasterDataPage from "./pages/MasterDataPage";
 
 export default function App() {
     return (
@@ -99,6 +107,44 @@ export default function App() {
                         element={<ProtectedRoute roles={REPORT_VIEW_ROLES} />}>
                         <Route path="/reports" element={<ReportsPage />} />
                     </Route>
+
+                    <Route
+                        path="/products"
+                        element={
+                            <MasterDataPage key="products" config={PRODUCTS} />
+                        }
+                    />
+                    <Route
+                        path="/categories"
+                        element={
+                            <MasterDataPage
+                                key="categories"
+                                config={CATEGORIES}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/units"
+                        element={<MasterDataPage key="units" config={UNITS} />}
+                    />
+                    <Route
+                        path="/suppliers"
+                        element={
+                            <MasterDataPage
+                                key="suppliers"
+                                config={SUPPLIERS}
+                            />
+                        }
+                    />
+                    <Route
+                        path="/customers"
+                        element={
+                            <MasterDataPage
+                                key="customers"
+                                config={CUSTOMERS}
+                            />
+                        }
+                    />
                 </Route>
             </Route>
 

@@ -9,6 +9,9 @@ import {
     Truck,
     Users,
     Wallet,
+    Package,
+    Ruler,
+    Tags,
 } from "lucide-react";
 
 const ALL = ["admin", "sales", "warehouse", "procurement", "finance", "owner"];
@@ -101,18 +104,39 @@ export const NAV_SECTIONS = [
         title: "Master Data",
         items: [
             {
+                label: "Produk",
+                to: "/products",
+                icon: Package,
+                roles: ALL,
+                ready: true,
+            },
+            {
+                label: "Kategori",
+                to: "/categories",
+                icon: Tags,
+                roles: ALL,
+                ready: true,
+            },
+            {
+                label: "Satuan",
+                to: "/units",
+                icon: Ruler,
+                roles: ALL,
+                ready: true,
+            },
+            {
                 label: "Customer",
                 to: "/customers",
                 icon: Users,
                 roles: ALL,
-                ready: false,
+                ready: true,
             },
             {
                 label: "Supplier",
                 to: "/suppliers",
                 icon: Truck,
                 roles: ALL,
-                ready: false,
+                ready: true,
             },
         ],
     },

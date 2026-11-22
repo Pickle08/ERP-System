@@ -27,3 +27,6 @@ export const FINANCE_VIEW_ROLES = ["admin", "finance", "owner"];
 export const FINANCE_WRITE_ROLES = ["admin", "finance"];
 
 export const REPORT_VIEW_ROLES = ["admin", "finance", "owner"];
+
+export const MASTER_WRITE_ROLES = ["admin", "procurement"]; // produk, kategori, satuan, supplier
+export const CUSTOMER_WRITE_ROLES = ["admin", "sales"];
