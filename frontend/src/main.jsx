@@ -17,6 +17,9 @@ const queryClient = new QueryClient({
     },
 });
 
+// Query laporan/dashboard selalu fresh, supaya angka tidak basi setelah ada transaksi
+queryClient.setQueryDefaults(["reports"], { staleTime: 0 });
+
 createRoot(document.getElementById("root")).render(
     <StrictMode>
         <QueryClientProvider client={queryClient}>
